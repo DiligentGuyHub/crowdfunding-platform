@@ -1,0 +1,29 @@
+﻿@model crowdfunding_application.Models.ViewModels.InboxCampaignViewModel;
+@{
+    ViewBag.Title = "My campaigns";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="text-center">
+    <h1 class="display-4">Campaigns you've started</h1>
+    <div>
+        @foreach (Campaign campaign in Model.Campaigns)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title font-weight-bold">@campaign.Title</h2>
+                    <a asp-action="Details" asp-controller="Campaign" asp-route-id="@campaign.Id">
+                        <img width="500" src="@campaign.HomeImage" />
+                    </a>
+                    <p class="card-text h3">@campaign.Description</p>
+                    <hr />
+                    <p class="card-text h3 text-secondary">Earned @campaign.MoneyActual/@campaign.MoneyGoal$</p>
+                    <hr />
+                    
+                    <p class="card-footer">@campaign.CreationDate</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>

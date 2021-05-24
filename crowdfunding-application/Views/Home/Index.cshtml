@@ -1,0 +1,27 @@
+﻿@model crowdfunding_application.Models.ViewModels.InboxNewsViewModel;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <div>
+        @foreach(News news in Model.NewsList)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title font-weight-bold">@news.Title</h2>
+                    <a class="link" asp-action="Details" asp-controller="Campaign" asp-route-id="@news.CampaignId">
+                        <img width="500" src="@news.Image" />
+                    </a>
+                    <p class="card-text h3">@news.Description</p>
+                    <p class="card-footer">@news.CreationDate</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+
+</script>
