@@ -70,7 +70,8 @@ namespace crowdfunding_application
                 return new CampaignController(
                     services.GetRequiredService<ICampaignService>(), 
                     services.GetRequiredService<UserManager<IdentityUser>>(),
-                    services.GetRequiredService<INewsService>()                    
+                    services.GetRequiredService<INewsService>(),                    
+                    services.GetRequiredService<IBonusService>()
                     );
             });
 
@@ -88,6 +89,16 @@ namespace crowdfunding_application
                     services.GetRequiredService<ICampaignService>(),
                     services.GetRequiredService<UserManager<IdentityUser>>(),
                     services.GetRequiredService<INewsService>()
+                    );
+            });
+
+            services.AddSingleton<BonusController>(services =>
+            {
+                return new BonusController(
+                    services.GetRequiredService<IBonusService>(),
+                    services.GetRequiredService<ITransactionService>(),
+                    services.GetRequiredService<ICampaignService>(),
+                    services.GetRequiredService<UserManager<IdentityUser>>()
                     );
             });
         }

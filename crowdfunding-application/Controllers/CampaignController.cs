@@ -17,17 +17,19 @@ namespace crowdfunding_application.Controllers
     public class CampaignController : Controller
     {
         private readonly ICampaignService _campaignService;
+        private readonly IBonusService _bonusService;
         private readonly INewsService _newsService;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly InboxCampaignViewModel _inboxCampaignViewModel;
         private readonly EditCampaignViewModel _editCampaignViewModel;
 
 
-        public CampaignController(ICampaignService campaignService, UserManager<IdentityUser> userManager, INewsService newsService)
+        public CampaignController(ICampaignService campaignService, UserManager<IdentityUser> userManager, INewsService newsService, IBonusService bonusService)
         {
             _campaignService = campaignService;
             _userManager = userManager;
             _newsService = newsService;
+            _bonusService = bonusService;
         }
 
         [Authorize]
@@ -40,7 +42,7 @@ namespace crowdfunding_application.Controllers
         //    };
         //    return View(viewmodel);
         //}
-
+        [Authorize]
         public async Task<IActionResult> Inbox()
         {
             if (User.Identity.IsAuthenticated)
@@ -100,8 +102,11 @@ namespace crowdfunding_application.Controllers
                 Campaign campaign = await _campaignService.Get(id);
                 if (campaign != null)
                 {
-                    _editCampaignViewModel.Campaign = campaign;
-                    return View(_editCampaignViewModel);
+                    var editCampaignViewModel = new EditCampaignViewModel
+                    {
+                        Campaign = campaign
+                    };
+                    return View(editCampaignViewModel);
 
                 }
             }
@@ -182,7 +187,8 @@ namespace crowdfunding_application.Controllers
             DetailsCampaignViewModel detailsCampaignViewModel = new DetailsCampaignViewModel()
             {
                 campaign = campaign,
-                NewsList = new List<News>(await _newsService.GetJoin(item => item.CampaignId == campaign.Id))
+                NewsList = new List<News>(await _newsService.GetJoin(item => item.CampaignId == campaign.Id)),
+                BonusList = new List<Bonus>(await _bonusService.GetJoin(item=> item.CampaignId == campaign.Id))
             };
 
             ViewBag.CurrentUserId = _userManager.GetUserId(User);

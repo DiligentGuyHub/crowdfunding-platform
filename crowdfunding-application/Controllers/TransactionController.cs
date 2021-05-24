@@ -1,6 +1,7 @@
 ﻿using crowdfunding_application.Models;
 using crowdfunding_application.Models.Services;
 using crowdfunding_application.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -25,18 +26,19 @@ namespace crowdfunding_application.Controllers
             _userManager = userManager;
             _newsService = newsService;
         }
-
+        [Authorize]
         public IActionResult Index()
         {
             return View();
         }
-
+        [Authorize]
         public IActionResult Pay(int? id)
         {
             return View(new PaymentTransaction() { CampaignId = (int)id });
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Pay(PaymentTransaction transaction)
         {
             var campaign = await _campaignService.Get(transaction.CampaignId);
@@ -44,7 +46,8 @@ namespace crowdfunding_application.Controllers
             {
                 CampaignId = campaign.Id,
                 UserId = _userManager.GetUserId(User),
-                Amount = transaction.Amount
+                Amount = transaction.Amount,
+                Date = DateTime.Now.ToLocalTime()
             };
             await _transactionService.Create(transactionNew);
             campaign.MoneyActual += transactionNew.Amount;
@@ -68,7 +71,7 @@ namespace crowdfunding_application.Controllers
             // redirect to payments statistics
             return RedirectToAction("Index", "Home");
         }
-
+        [Authorize]
         public async Task<IActionResult> Transactions()
         {
             var transactionsViewModel = new TransactionsViewModel();

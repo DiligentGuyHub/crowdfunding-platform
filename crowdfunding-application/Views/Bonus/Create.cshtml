@@ -1,0 +1,30 @@
+﻿@model crowdfunding_application.Models.ViewModels.CreateBonusViewModel
+@{
+    ViewBag.Title = "Create bonus";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Create", "Bonus", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.CampaignId)
+    @Html.HiddenFor(model => model.Bonus.Id)
+
+    <form asp-action="create" asp-controller="news" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label asp-for="Bonus.Title" class="control-label">Name your bonus somehow</label>
+            <input type="text" asp-for="Bonus.Title" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Bonus.Description" class="control-label">For what will donater recieve it?</label>
+            <textarea type="text" asp-for="Bonus.Description" class="form-control"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="MainImage" class="control-label">Select an image for bonus</label>
+            <input type="file" asp-for="MainImage" class="form-control" />
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Create news" class="btn btn-outline-primary" />
+        </div>
+    </form>
+}

@@ -8,7 +8,7 @@ namespace crowdfunding_application.Models
 {
     public class Bonus : ModelBase
     {
-        public int CampaingId { get; set; }
+        public int CampaignId { get; set; }
         [ForeignKey("CampaignId")]
         public string Title { get; set; }
         public string Description { get; set; }

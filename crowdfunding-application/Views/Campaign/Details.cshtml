@@ -14,8 +14,10 @@
             <p class="card-footer text-muted">Creation date @Model.campaign.CreationDate</p>
             <div id="donatorControl">
                 <a class="btn btn-outline-success col-sm-12" asp-action="Pay" asp-controller="Transaction" asp-route-id="@Model.campaign.Id">Donate</a>
-            </div>            
+            </div>
             <div id="creatorControl">
+                <h2>News</h2>
+                <hr />
                 <a class="btn btn-outline-danger col-sm-3" asp-action="Delete" asp-controller="Campaign" asp-route-id="@Model.campaign.Id">Delete</a>
                 <a class="btn btn-outline-primary col-sm-3" asp-action="Create" asp-controller="News" asp-route-id="@Model.campaign.Id">Create news</a>
                 <a class="btn btn-outline-primary col-sm-3" asp-action="Edit" asp-controller="Campaign" asp-route-id="@Model.campaign.Id">Edit</a>
@@ -34,6 +36,24 @@
 
                     }
                 </ul>
+                <br />
+                <h2>Bonuses</h2>
+                <hr />
+                <a class="btn btn-outline-primary col-sm-9" asp-action="Create" asp-controller="Bonus" asp-route-id="@Model.campaign.Id">Create</a>
+                <ul class="list-group list-group-horizontal">
+                    @foreach (var item in Model.BonusList)
+                    {
+                        <li class="list-group-item text-lg-left">
+                            <div class="card-body">
+                                <h3 class="card-title">@item.Title</h3>
+                                <img src="@item.Image" />
+                                <p class="card-text">@item.Description</p>
+                                <a class="btn btn-outline-primary" asp-action="Index" asp-controller="Bonus" asp-route-id="@item.Id">Edit</a>
+                                <a class="btn btn-outline-danger" asp-action="Delete" asp-controller="Bonus" asp-route-id="@item.Id">Delete</a>
+                            </div>
+                        </li>
+                    }
+                </ul>
             </div>
             
         </div>
@@ -47,12 +67,12 @@
     var donatorControl = document.getElementById("donatorControl")
     if ('@(ViewBag.CurrentUserId)' == '@(ViewBag.CreatorId)') {
         console.log("match")
-        creatorControl.style.visibility = 'visible';
-        donatorControl.style.visibility = 'hidden';
+        creatorControl.style.display = 'block';
+        donatorControl.style.display = 'none';
     }
     else {
         console.log("don't match")
-        donatorControl.style.visibility = 'visible';
-        creatorControl.style.visibility = 'hidden';
+        donatorControl.style.display = 'block';
+        creatorControl.style.display = 'none';
     }
 </script>
