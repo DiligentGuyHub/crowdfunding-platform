@@ -1,0 +1,19 @@
+﻿@model crowdfunding_application.Models.ViewModels.TransactionsViewModel
+
+@{ 
+
+} 
+
+<div class="container">
+    <div class="list-group">
+        @foreach(var item in Model.Transactions)
+        {
+        <div class="list-group-item">
+            <p>Transaction ID: @item.Id</p>
+            <p>Campaign ID: @item.CampaignId</p>
+            <p>Amount: @item.Amount</p>
+            <p class="text-muted">Date: @item.Date</p>
+        </div> 
+        }
+    </div>
+</div>

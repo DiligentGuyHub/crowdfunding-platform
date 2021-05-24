@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace crowdfunding_application.Models.Services
 {
-    public interface ITransactionService : IGenericService<Transaction>
+    public interface ITransactionService : IGenericService<PaymentTransaction>
     {
 
     }

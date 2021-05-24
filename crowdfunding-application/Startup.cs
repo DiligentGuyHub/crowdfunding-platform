@@ -52,6 +52,7 @@ namespace crowdfunding_application
             //services.AddScoped<ICloudinaryService, CloudinaryService>();
             services.AddScoped<ICampaignService, CampaignService>();
             services.AddScoped<INewsService, NewsService>();
+            services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IBonusService, BonusService>();
             services.AddScoped<ITagService, TagService>();
 
@@ -76,6 +77,16 @@ namespace crowdfunding_application
             services.AddSingleton<NewsController>(services =>
             {
                 return new NewsController(
+                    services.GetRequiredService<INewsService>()
+                    );
+            });
+
+            services.AddSingleton<TransactionController>(services =>
+            {
+                return new TransactionController(
+                    services.GetRequiredService<ITransactionService>(),
+                    services.GetRequiredService<ICampaignService>(),
+                    services.GetRequiredService<UserManager<IdentityUser>>(),
                     services.GetRequiredService<INewsService>()
                     );
             });

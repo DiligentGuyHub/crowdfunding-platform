@@ -21,7 +21,7 @@ namespace crowdfunding_application.Models
         public DateTime CreationDate { get; set; }
         public ICollection<Bonus> Bonuses { get; set; }
         public ICollection<News> News { get; set; }
-        public ICollection<Transaction> Transactions { get; set; }
+        public ICollection<PaymentTransaction> Transactions { get; set; }
         public ICollection<Tag> Tags { get; set; }
     }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace crowdfunding_application.Models.Services
 {
-    public class TransactionService : GenericService<Transaction>, ITransactionService
+    public class TransactionService : GenericService<PaymentTransaction>, ITransactionService
     {
         public TransactionService(ApplicationDbContext context) : base(context)
         {

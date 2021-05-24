@@ -28,8 +28,6 @@ namespace crowdfunding_application.Controllers
             _campaignService = campaignService;
             _userManager = userManager;
             _newsService = newsService;
-            _inboxCampaignViewModel = new InboxCampaignViewModel();
-            _editCampaignViewModel = new EditCampaignViewModel();
         }
 
         [Authorize]
@@ -47,6 +45,7 @@ namespace crowdfunding_application.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
+                var _inboxCampaignViewModel = new InboxCampaignViewModel();
                 _inboxCampaignViewModel.Campaigns.AddRange(await _campaignService.GetJoin(item => item.UserId == _userManager.GetUserId(User)));
                 return View(_inboxCampaignViewModel);
             }

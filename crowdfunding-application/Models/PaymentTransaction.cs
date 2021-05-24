@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace crowdfunding_application.Models
 {
-    public class Transaction : ModelBase
+    public class PaymentTransaction : ModelBase
     {
         public string UserId { get; set; }
         [ForeignKey("UserId")]
