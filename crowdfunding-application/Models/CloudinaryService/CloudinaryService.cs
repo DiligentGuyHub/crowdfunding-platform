@@ -9,9 +9,9 @@ namespace crowdfunding_application.Models.CloudinaryService
 {
     public class CloudinaryService : ICloudinaryService
     {
-        public CloudinaryService(string cloudName, string cloudApiKey, string cloudApiSecret)
+        public CloudinaryService(CloudinaryConfiguration configuration)
         {
-            _account = new Account(cloudName, cloudApiKey, cloudApiSecret);
+            _account = new Account(configuration.CloudName, configuration.CloudApiKey, configuration.CloudApiSecret);
             _cloudinary = new Cloudinary(_account);
         }
 

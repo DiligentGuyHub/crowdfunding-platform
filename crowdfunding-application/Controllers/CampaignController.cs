@@ -2,6 +2,7 @@
 using CloudinaryDotNet.Actions;
 using crowdfunding_application.Data;
 using crowdfunding_application.Models;
+using crowdfunding_application.Models.CloudinaryService;
 using crowdfunding_application.Models.Services;
 using crowdfunding_application.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -19,17 +20,17 @@ namespace crowdfunding_application.Controllers
         private readonly ICampaignService _campaignService;
         private readonly IBonusService _bonusService;
         private readonly INewsService _newsService;
+        private readonly ICloudinaryService _cloudinaryService;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly InboxCampaignViewModel _inboxCampaignViewModel;
-        private readonly EditCampaignViewModel _editCampaignViewModel;
 
 
-        public CampaignController(ICampaignService campaignService, UserManager<IdentityUser> userManager, INewsService newsService, IBonusService bonusService)
+        public CampaignController(ICampaignService campaignService, UserManager<IdentityUser> userManager, INewsService newsService, IBonusService bonusService, ICloudinaryService cloudinaryService)
         {
             _campaignService = campaignService;
             _userManager = userManager;
             _newsService = newsService;
             _bonusService = bonusService;
+            _cloudinaryService = cloudinaryService;
         }
 
         [Authorize]
@@ -67,17 +68,7 @@ namespace crowdfunding_application.Controllers
             campaignViewModel.Campaign.CreationDate = DateTime.Now.ToLocalTime();
             campaignViewModel.Campaign.IsFinished = false;
 
-            Account account = new Account(
-                "dkmufkwfv",
-                "215513762388953",
-                "24h2YowdCkwIQMjMHnzijXp0aiE"
-                );
-            Cloudinary cloudinary = new Cloudinary(account);
-            var uploadParams = new ImageUploadParams()
-            {
-                File = new FileDescription(@"C:\Users\longr\OneDrive\Изображения\" + campaignViewModel.MainImage.FileName)
-            };
-            var uploadResult = cloudinary.Upload(uploadParams);
+            var uploadResult = _cloudinaryService.UploadImage(@"C:\Users\longr\OneDrive\Изображения\" + campaignViewModel.MainImage.FileName);
 
             campaignViewModel.Campaign.HomeImage = uploadResult.SecureUrl.AbsoluteUri;
 
@@ -118,17 +109,7 @@ namespace crowdfunding_application.Controllers
         {
             if (editCampaignViewModel.MainImage != null)
             {
-                Account account = new Account(
-                "dkmufkwfv",
-                "215513762388953",
-                "24h2YowdCkwIQMjMHnzijXp0aiE"
-                );
-                Cloudinary cloudinary = new Cloudinary(account);
-                var uploadParams = new ImageUploadParams()
-                {
-                    File = new FileDescription(@"C:\Users\longr\OneDrive\Изображения\" + editCampaignViewModel.MainImage.FileName)
-                };
-                var uploadResult = cloudinary.Upload(uploadParams);
+                var uploadResult = _cloudinaryService.UploadImage(@"C:\Users\longr\OneDrive\Изображения\" + editCampaignViewModel.MainImage.FileName);
 
                 editCampaignViewModel.Campaign.HomeImage = uploadResult.SecureUrl.AbsoluteUri;
             }

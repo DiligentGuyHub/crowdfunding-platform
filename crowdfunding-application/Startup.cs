@@ -56,51 +56,55 @@ namespace crowdfunding_application
             services.AddScoped<IBonusService, BonusService>();
             services.AddScoped<ITagService, TagService>();
 
+            services.AddScoped<ICloudinaryService, CloudinaryService>();
+
+            services.AddSingleton(Configuration.GetSection("Cloudinary").Get<CloudinaryConfiguration>());
+
             // Controllers and their services
-            services.AddSingleton<HomeController>(services =>
-            {
-                return new HomeController(
-                    services.GetRequiredService<ILogger<HomeController>>(),
-                    services.GetRequiredService<INewsService>()
-                    );
-            });
+            //services.AddSingleton<HomeController>(services =>
+            //{
+            //    return new HomeController(
+            //        services.GetRequiredService<ILogger<HomeController>>(),
+            //        services.GetRequiredService<INewsService>()
+            //        );
+            //});
 
-            services.AddSingleton<CampaignController>(services =>
-            {
-                return new CampaignController(
-                    services.GetRequiredService<ICampaignService>(), 
-                    services.GetRequiredService<UserManager<IdentityUser>>(),
-                    services.GetRequiredService<INewsService>(),                    
-                    services.GetRequiredService<IBonusService>()
-                    );
-            });
+            //services.AddSingleton<CampaignController>(services =>
+            //{
+            //    return new CampaignController(
+            //        services.GetRequiredService<ICampaignService>(), 
+            //        services.GetRequiredService<UserManager<IdentityUser>>(),
+            //        services.GetRequiredService<INewsService>(),                    
+            //        services.GetRequiredService<IBonusService>()
+            //        );
+            //});
 
-            services.AddSingleton<NewsController>(services =>
-            {
-                return new NewsController(
-                    services.GetRequiredService<INewsService>()
-                    );
-            });
+            //services.AddSingleton(services =>
+            //{
+            //    return new NewsController(
+            //        services.GetRequiredService<INewsService>()
+            //        );
+            //});
 
-            services.AddSingleton<TransactionController>(services =>
-            {
-                return new TransactionController(
-                    services.GetRequiredService<ITransactionService>(),
-                    services.GetRequiredService<ICampaignService>(),
-                    services.GetRequiredService<UserManager<IdentityUser>>(),
-                    services.GetRequiredService<INewsService>()
-                    );
-            });
+            //services.AddSingleton(services =>
+            //{
+            //    return new TransactionController(
+            //        services.GetRequiredService<ITransactionService>(),
+            //        services.GetRequiredService<ICampaignService>(),
+            //        services.GetRequiredService<UserManager<IdentityUser>>(),
+            //        services.GetRequiredService<INewsService>()
+            //        );
+            //});
 
-            services.AddSingleton<BonusController>(services =>
-            {
-                return new BonusController(
-                    services.GetRequiredService<IBonusService>(),
-                    services.GetRequiredService<ITransactionService>(),
-                    services.GetRequiredService<ICampaignService>(),
-                    services.GetRequiredService<UserManager<IdentityUser>>()
-                    );
-            });
+            //services.AddSingleton(services =>
+            //{
+            //    return new BonusController(
+            //        services.GetRequiredService<IBonusService>(),
+            //        services.GetRequiredService<ITransactionService>(),
+            //        services.GetRequiredService<ICampaignService>(),
+            //        services.GetRequiredService<UserManager<IdentityUser>>()
+            //        );
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
