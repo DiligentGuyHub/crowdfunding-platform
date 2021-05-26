@@ -1,6 +1,7 @@
 ﻿using crowdfunding_application.Models;
 using crowdfunding_application.Models.Services;
 using crowdfunding_application.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -32,7 +33,7 @@ namespace crowdfunding_application.Controllers
             _inboxNewsViewModel.NewsList = news;
             return View(_inboxNewsViewModel);
         }
-
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();

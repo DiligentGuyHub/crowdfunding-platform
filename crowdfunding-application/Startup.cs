@@ -2,6 +2,7 @@ using crowdfunding_application.Controllers;
 using crowdfunding_application.Data;
 using crowdfunding_application.Models.CloudinaryService;
 using crowdfunding_application.Models.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -36,6 +37,8 @@ namespace crowdfunding_application
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
+           
+
             services.AddDefaultIdentity<IdentityUser>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = true;
@@ -43,15 +46,29 @@ namespace crowdfunding_application
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
+                options.SignIn.RequireConfirmedEmail = false;
                 options.Password.RequiredLength = 5;
             })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
+            services.AddRazorPages();
+
+            services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    IConfigurationSection googleAuthNSection = Configuration.GetSection("Google");
+
+                    options.ClientId = googleAuthNSection["ClientId"];
+                    options.ClientSecret = googleAuthNSection["ClientSecret"];
+                });
+                
+            
 
             // Application Database Context services
-            //services.AddScoped<ICloudinaryService, CloudinaryService>();
             services.AddScoped<ICampaignService, CampaignService>();
             services.AddScoped<INewsService, NewsService>();
+            services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IBonusService, BonusService>();
             services.AddScoped<IBonusTransactionService, BonusTransactionService>();
