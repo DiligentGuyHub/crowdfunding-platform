@@ -76,12 +76,17 @@ namespace crowdfunding_application.Controllers
             await _campaignService.Update(campaign);
 
             var bonusList = await _bonusService.GetJoin(item => item.CampaignId == campaign.Id);
-            var bonus = bonusList.Where(item => transaction.Amount >= item.Money).OrderBy(item=> item.Money).Last();
-            await _bonusTransactionService.Create(new BonusTransaction()
+            var bonuses = bonusList.Where(item => transaction.Amount >= item.Money).OrderBy(item=> item.Money);
+            if(bonuses.Count() != 0)
             {
-                UserId = _userManager.GetUserId(User),
-                BonusId = bonus.Id
-            });
+                var bonus = bonuses.Last();
+                await _bonusTransactionService.Create(new BonusTransaction()
+                {
+                    UserId = _userManager.GetUserId(User),
+                    BonusId = bonus.Id
+                });
+            }
+
 
             // redirect to payments statistics
             return RedirectToAction("Details", "Campaign", new { id = campaign.Id });
