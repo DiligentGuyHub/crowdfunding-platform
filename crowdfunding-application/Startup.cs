@@ -54,7 +54,9 @@ namespace crowdfunding_application
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IBonusService, BonusService>();
+            services.AddScoped<IBonusTransactionService, BonusTransactionService>();
             services.AddScoped<ITagService, TagService>();
+            services.AddScoped<IRatingService, RatingService>();
 
             services.AddScoped<ICloudinaryService, CloudinaryService>();
 

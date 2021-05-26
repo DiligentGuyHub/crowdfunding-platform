@@ -8,8 +8,8 @@ namespace crowdfunding_application.Models
 {
     public class Campaign : ModelBase
     {
-        public string UserId { get; set; }
         [ForeignKey("UserId")]
+        public string UserId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string Category { get; set; }

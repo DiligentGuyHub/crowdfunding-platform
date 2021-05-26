@@ -20,17 +20,21 @@ namespace crowdfunding_application.Controllers
         private readonly ICampaignService _campaignService;
         private readonly IBonusService _bonusService;
         private readonly INewsService _newsService;
+        private readonly IRatingService _ratingService;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly UserManager<IdentityUser> _userManager;
+        private DetailsCampaignViewModel _detailsCampaignViewModel;
 
 
-        public CampaignController(ICampaignService campaignService, UserManager<IdentityUser> userManager, INewsService newsService, IBonusService bonusService, ICloudinaryService cloudinaryService)
+        public CampaignController(ICampaignService campaignService, UserManager<IdentityUser> userManager, INewsService newsService, IBonusService bonusService, ICloudinaryService cloudinaryService, IRatingService ratingService)
         {
             _campaignService = campaignService;
             _userManager = userManager;
             _newsService = newsService;
             _bonusService = bonusService;
             _cloudinaryService = cloudinaryService;
+            _detailsCampaignViewModel = new DetailsCampaignViewModel();
+            _ratingService = ratingService;
         }
 
         [Authorize]
@@ -46,13 +50,10 @@ namespace crowdfunding_application.Controllers
         [Authorize]
         public async Task<IActionResult> Inbox()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                var _inboxCampaignViewModel = new InboxCampaignViewModel();
-                _inboxCampaignViewModel.Campaigns.AddRange(await _campaignService.GetJoin(item => item.UserId == _userManager.GetUserId(User)));
-                return View(_inboxCampaignViewModel);
-            }
-            return Content("Not autthenticated");
+            var _inboxCampaignViewModel = new InboxCampaignViewModel();
+            _inboxCampaignViewModel.Campaigns.AddRange(await _campaignService.GetJoin(item => item.UserId == _userManager.GetUserId(User)));
+            return View(_inboxCampaignViewModel);
+        
         }
         [Authorize]
         public IActionResult Create()
@@ -65,10 +66,10 @@ namespace crowdfunding_application.Controllers
         public async Task<IActionResult> Create(CreateCampaignViewModel campaignViewModel)
         {
             campaignViewModel.Campaign.UserId = _userManager.GetUserId(User);
-            campaignViewModel.Campaign.CreationDate = DateTime.Now.ToLocalTime();
+            campaignViewModel.Campaign.CreationDate = DateTime.Now.ToLocalTime().ToLocalTime();
             campaignViewModel.Campaign.IsFinished = false;
 
-            var uploadResult = _cloudinaryService.UploadImage(@"C:/" + campaignViewModel.MainImage.FileName.Replace("\\", "/"));
+            var uploadResult = _cloudinaryService.UploadImage(campaignViewModel.MainImage);
 
             campaignViewModel.Campaign.HomeImage = uploadResult.SecureUrl.AbsoluteUri;
 
@@ -78,7 +79,7 @@ namespace crowdfunding_application.Controllers
                 CampaignId = campaign.Id,
                 Title = $"{ campaignViewModel.Campaign.Title} - brand new campaign by {_userManager.GetUserName(User)}!",
                 Description = campaignViewModel.Campaign.Description,
-                CreationDate = DateTime.Now,
+                CreationDate = DateTime.Now.ToLocalTime(),
                 Image = uploadResult.SecureUrl.AbsoluteUri
             };
 
@@ -109,7 +110,7 @@ namespace crowdfunding_application.Controllers
         {
             if (editCampaignViewModel.MainImage != null)
             {
-                var uploadResult = _cloudinaryService.UploadImage(@"C:\Users\longr\OneDrive\Изображения\" + editCampaignViewModel.MainImage.FileName);
+                var uploadResult = _cloudinaryService.UploadImage(editCampaignViewModel.MainImage);
 
                 editCampaignViewModel.Campaign.HomeImage = uploadResult.SecureUrl.AbsoluteUri;
             }
@@ -120,7 +121,7 @@ namespace crowdfunding_application.Controllers
                 CampaignId = editCampaignViewModel.Campaign.Id,
                 Title = $"{ editCampaignViewModel.Campaign.Title} - see updates on campaign",
                 Description = string.Empty,
-                CreationDate = DateTime.Now,
+                CreationDate = DateTime.Now.ToLocalTime(),
                 Image = editCampaignViewModel.Campaign.HomeImage
             };
 
@@ -162,10 +163,52 @@ namespace crowdfunding_application.Controllers
             return NotFound();
         }
 
+        [HttpGet]
+        [ActionName("Finish")]
+        public async Task<IActionResult> FinishCampaign(int? id)
+        {
+            if (id != null)
+            {
+                Campaign campaign = await _campaignService.Get(id);
+                if (campaign != null)
+                    return View(campaign);
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Finish(int? id)
+        {
+            if (id != null)
+            {
+                Campaign campaign = await _campaignService.Get(id);
+                if (campaign != null)
+                {
+                    campaign.IsFinished = true;
+                    await _campaignService.Update(campaign.Id, campaign);
+                    News news = new()
+                    {
+                        CampaignId = campaign.Id,
+                        Title = $"{campaign.Title} - campaign finished!",
+                        Description = $"Campaign goal reached in " +
+                        $"{(int)(DateTime.Now.ToLocalTime() - campaign.CreationDate).TotalDays} days, " +
+                        $"{(int)(DateTime.Now.ToLocalTime() - campaign.CreationDate).TotalHours} hours, " +
+                        $"{(int)(DateTime.Now.ToLocalTime() - campaign.CreationDate).TotalHours} minutes",
+                        CreationDate = DateTime.Now.ToLocalTime(),
+                        Image = campaign.HomeImage
+                    };
+                    await _newsService.Create(news);
+
+                    return RedirectToAction("Details", "Campaign", new { id });
+                }
+            }
+            return NotFound();
+        }
+
         public async Task<IActionResult> Details(int? id)
         {
             Campaign campaign = await _campaignService.Get(id);
-            DetailsCampaignViewModel detailsCampaignViewModel = new DetailsCampaignViewModel()
+            _detailsCampaignViewModel = new DetailsCampaignViewModel()
             {
                 campaign = campaign,
                 NewsList = new List<News>(await _newsService.GetJoin(item => item.CampaignId == campaign.Id)),
@@ -174,7 +217,58 @@ namespace crowdfunding_application.Controllers
 
             ViewBag.CurrentUserId = _userManager.GetUserId(User);
             ViewBag.CreatorId = campaign.UserId;
-            return View(detailsCampaignViewModel);
+
+            var allRatings = await _ratingService.GetJoin(item => item.CampaignId == id);
+            if (allRatings.Count() != 0)
+            {
+                int scores = allRatings.Sum(item => item.Score);
+                double average = (double)scores / (double)allRatings.Count();
+                _detailsCampaignViewModel.AverageRating = average;
+            }
+            var MyRating = allRatings.Where(item => item.UserId == _userManager.GetUserId(User)).FirstOrDefault();
+            if (MyRating != null)
+                ViewBag.MyRating = MyRating.Score;
+            else
+                ViewBag.MyRating = 0;
+            return View(_detailsCampaignViewModel);
+        }
+        public async Task<IActionResult> Rate(int? id, int? rating)
+        {
+            var allRatings = await _ratingService.GetJoin(item => item.CampaignId == id);
+            var campaign = await _campaignService.Get(id);
+            if (campaign.UserId == _userManager.GetUserId(User))
+            {
+                return RedirectToAction("Details", "Campaign", new { id });
+            }
+
+            if (allRatings.Count() == 0)
+            {
+                await _ratingService.Create(new Rating
+                {
+                    UserId = _userManager.GetUserId(User),
+                    CampaignId = (int)id,
+                    Score = (int)rating
+                });
+            }
+            else
+            {
+                var previousRating = allRatings.Where(item => item.UserId == _userManager.GetUserId(User)).FirstOrDefault();
+                if(previousRating == null)
+                {
+                    await _ratingService.Create(new Rating
+                    {
+                        UserId = _userManager.GetUserId(User),
+                        CampaignId = (int)id,
+                        Score = (int)rating
+                    });
+                }
+                else
+                {
+                    previousRating.Score = (int)rating;
+                    await _ratingService.Update(previousRating.Id, previousRating);
+                }
+            }
+            return RedirectToAction("Details", "Campaign", new { id });
         }
 
     }

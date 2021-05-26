@@ -13,7 +13,7 @@
     @Html.HiddenFor(model => model.Campaign.UserId)
     @Html.HiddenFor(model => model.Campaign.HomeImage)
 
-    <img width="500" src="@Model.Campaign.HomeImage" />
+    <img style="max-width: 500px" src="@Model.Campaign.HomeImage" />
     <form asp-action="edit" asp-controller="campaign" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label asp-for="Campaign.Title" class="control-label">How would you like to call your campaign?</label>
@@ -35,10 +35,6 @@
                 <option value="Art">Art</option>
                 <option value="Food">Food</option>
             </select>
-        </div>
-        <div class="form-group">
-            <label asp-for="Campaign.IsFinished" class="control-label">Finish company</label>
-            <input type="checkbox" asp-for="Campaign.IsFinished" class="form-control" />
         </div>
         <div class="form-group">
             <label asp-for="MainImage" class="control-label">Select your campaign's main image</label>

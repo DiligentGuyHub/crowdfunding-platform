@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace crowdfunding_application.Models
 {
-    public class Bonus : ModelBase
+    public class Rating : ModelBase
     {
+        [ForeignKey("UserId")]
+        public string UserId { get; set; }
+
         [ForeignKey("CampaignId")]
         public int CampaignId { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public int Money { get; set; }
-        public string Image { get; set; }
+        public int Score { get; set; }
     }
 }

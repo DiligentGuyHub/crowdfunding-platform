@@ -16,8 +16,10 @@ namespace crowdfunding_application.Data
         }
         public DbSet<Campaign> Campaigns { get; set; }
         public DbSet<Bonus> Bonuses { get; set; }
+        public DbSet<BonusTransaction> BonusTransactions { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<News> News { get; set; }
         public DbSet<PaymentTransaction> Transactions { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
     }
 }

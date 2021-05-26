@@ -6,40 +6,36 @@
     <div class="card">
         <div class="card-body">
             <h2 class="card-title font-weight-bold text-left">@Model.campaign.Title</h2>
-            <img width="500" src="@Model.campaign.HomeImage" />
+            <img class="card-img" src="@Model.campaign.HomeImage" />
             <p class="card-text h3 text-left">@Model.campaign.Description</p>
             <hr />
             <p class="card-text h3 text-secondary text-left">Earned @Model.campaign.MoneyActual/@Model.campaign.MoneyGoal$</p>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: @Model.Percentage%;" aria-valuenow="@Model.Percentage" aria-valuemin="0" aria-valuemax="100">@Model.Percentage%</div>
+            </div>
+            <div class="card-body">
+                <p style="font-size: 24px;">@Model.AverageRating/5</p>
+                <a asp-action="Rate" asp-controller="Campaign" asp-route-id="@Model.campaign.Id" asp-route-rating="1" class="rating bg-transparent border-0"><img id="img1" class="rating" width="32" src="https://res.cloudinary.com/dkmufkwfv/image/upload/v1622039319/star-empty_zohcfu.png" /></a>
+                <a asp-action="Rate" asp-controller="Campaign" asp-route-id="@Model.campaign.Id" asp-route-rating="2" class="rating bg-transparent border-0"><img id="img2" class="rating" width="32" src="https://res.cloudinary.com/dkmufkwfv/image/upload/v1622039319/star-empty_zohcfu.png" /></a>
+                <a asp-action="Rate" asp-controller="Campaign" asp-route-id="@Model.campaign.Id" asp-route-rating="3" class="rating bg-transparent border-0"><img id="img3" class="rating" width="32" src="https://res.cloudinary.com/dkmufkwfv/image/upload/v1622039319/star-empty_zohcfu.png" /></a>
+                <a asp-action="Rate" asp-controller="Campaign" asp-route-id="@Model.campaign.Id" asp-route-rating="4" class="rating bg-transparent border-0"><img id="img4" class="rating" width="32" src="https://res.cloudinary.com/dkmufkwfv/image/upload/v1622039319/star-empty_zohcfu.png" /></a>
+                <a asp-action="Rate" asp-controller="Campaign" asp-route-id="@Model.campaign.Id" asp-route-rating="5" class="rating bg-transparent border-0"><img id="img5" class="rating" width="32" src="https://res.cloudinary.com/dkmufkwfv/image/upload/v1622039319/star-empty_zohcfu.png" /></a>
+            </div>
+            
             <hr />
             <p class="card-footer text-muted">Creation date @Model.campaign.CreationDate</p>
-            <div id="donatorControl">
-                <a class="btn btn-outline-success col-sm-12" asp-action="Pay" asp-controller="Transaction" asp-route-id="@Model.campaign.Id">Donate</a>
-            </div>
-            <div id="creatorControl">
-                <h2>News</h2>
-                <hr />
-                <a class="btn btn-outline-danger col-sm-3" asp-action="Delete" asp-controller="Campaign" asp-route-id="@Model.campaign.Id">Delete</a>
-                <a class="btn btn-outline-primary col-sm-3" asp-action="Create" asp-controller="News" asp-route-id="@Model.campaign.Id">Create news</a>
-                <a class="btn btn-outline-primary col-sm-3" asp-action="Edit" asp-controller="Campaign" asp-route-id="@Model.campaign.Id">Edit</a>
-                <ul class="list-group">
-                    @foreach (var item in Model.NewsList)
+            @if (ViewBag.CurrentUserId != ViewBag.CreatorId)
+            {
+                <div id="donatorControl">
+                    @if (Model.campaign.IsFinished)
                     {
-                        <li class="list-group-item text-lg-left">
-                            <div class="card-body">
-                                <h5 class="card-title">@item.Title</h5>
-                                <p class="card-text">@item.Description</p>
-                                <p class="card-footer text-muted">@item.CreationDate</p>
-                                <a class="btn btn-outline-primary" asp-action="Index" asp-controller="News" asp-route-id="@item.Id">Edit</a>
-                                <a class="btn btn-outline-danger" asp-action="Delete" asp-controller="News" asp-route-id="@item.Id">Delete</a>
-                            </div>
-                        </li>
+                    <a class="btn btn-outline-success col-sm-12 disabled" asp-action="Pay" asp-controller="Transaction" asp-route-id="@Model.campaign.Id">Donate unavailable</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-success col-sm-12" asp-action="Pay" asp-controller="Transaction" asp-route-id="@Model.campaign.Id">Donate</a>
 
                     }
-                </ul>
-                <br />
-                <h2>Bonuses</h2>
-                <hr />
-                <a class="btn btn-outline-primary col-sm-9" asp-action="Create" asp-controller="Bonus" asp-route-id="@Model.campaign.Id">Create</a>
                 <ul class="list-group list-group-horizontal">
                     @foreach (var item in Model.BonusList)
                     {
@@ -48,31 +44,96 @@
                                 <h3 class="card-title">@item.Title</h3>
                                 <img src="@item.Image" />
                                 <p class="card-text">@item.Description</p>
-                                <a class="btn btn-outline-primary" asp-action="Index" asp-controller="Bonus" asp-route-id="@item.Id">Edit</a>
-                                <a class="btn btn-outline-danger" asp-action="Delete" asp-controller="Bonus" asp-route-id="@item.Id">Delete</a>
                             </div>
                         </li>
                     }
                 </ul>
-            </div>
-            
+                </div>
+            }
+            else
+            {
+        <div id="creatorControl">
+            <h2>News</h2>
+            <hr />
+            <a class="btn btn-outline-danger col-sm-2" asp-action="Delete" asp-controller="Campaign" asp-route-id="@Model.campaign.Id">Delete</a>
+            @if (!Model.campaign.IsFinished)
+            {
+            <a class="btn btn-outline-danger col-sm-2" asp-action="Finish" asp-controller="Campaign" asp-route-id="@Model.campaign.Id">Finish</a>
+            <a class="btn btn-outline-primary col-sm-2" asp-action="Create" asp-controller="News" asp-route-id="@Model.campaign.Id">Create news</a>
+            <a class="btn btn-outline-primary col-sm-2" asp-action="Edit" asp-controller="Campaign" asp-route-id="@Model.campaign.Id">Edit</a>
+            }
+
+            <h2>Bonuses</h2>
+            <hr />
+            <ul class="list-group">
+                @foreach (var item in Model.NewsList)
+                {
+                <li class="list-group-item text-lg-left">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title</h5>
+                        <p class="card-text">@item.Description</p>
+                        <p class="card-footer text-muted">@item.CreationDate</p>
+                        @if (!Model.campaign.IsFinished)
+                            {
+                        <a class="btn btn-outline-primary" asp-action="Index" asp-controller="News" asp-route-id="@item.Id">Edit</a>
+                        <a class="btn btn-outline-danger" asp-action="Delete" asp-controller="News" asp-route-id="@item.Id">Delete</a>
+
+                            }
+                    </div>
+                </li>
+
+                }
+            </ul>
+            <br />
+            <h2>Bonuses</h2>
+            <hr />
+            @if (!Model.campaign.IsFinished)
+            {
+            <a class="btn btn-outline-primary col-sm-9" asp-action="Create" asp-controller="Bonus" asp-route-id="@Model.campaign.Id">Create</a>
+
+            }
+            <ul class="list-group list-group-horizontal">
+                @foreach (var item in Model.BonusList)
+                {
+                <li class="list-group-item text-lg-left">
+                    <div class="card-body">
+                        <h3 class="card-title">@item.Title</h3>
+                        <img src="@item.Image" />
+                        <p class="card-text">@item.Description</p>
+                        @if (!Model.campaign.IsFinished)
+                            {
+                        <a class="btn btn-outline-primary" asp-action="Index" asp-controller="Bonus" asp-route-id="@item.Id">Edit</a>
+                        <a class="btn btn-outline-danger" asp-action="Delete" asp-controller="Bonus" asp-route-id="@item.Id">Delete</a>
+                            }
+                    </div>
+                </li>
+                }
+            </ul>
         </div>
-        
-        
-     </div>
+
+            }
+
+        </div>
+
+
+    </div>
 </div>
 
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script>
-    var creatorControl = document.getElementById("creatorControl")
-    var donatorControl = document.getElementById("donatorControl")
-    if ('@(ViewBag.CurrentUserId)' == '@(ViewBag.CreatorId)') {
-        console.log("match")
-        creatorControl.style.display = 'block';
-        donatorControl.style.display = 'none';
-    }
-    else {
-        console.log("don't match")
-        donatorControl.style.display = 'block';
-        creatorControl.style.display = 'none';
-    }
+    $(document).ready(function () {
+        for (let i = 0; i < Number(@ViewBag.MyRating); i++) {
+            $("#img" + (i + 1)).attr("src", "https://res.cloudinary.com/dkmufkwfv/image/upload/v1622039323/star-filled_pteszp.png")
+        }
+        $(".rating").click(function (e) {
+            for (let i = 0; i < 5; i++) {
+                if (i < Number(e.target.id.replace("img", "")))
+                    $("#img" + (i + 1)).attr("src", "https://res.cloudinary.com/dkmufkwfv/image/upload/v1622039323/star-filled_pteszp.png")
+                else
+                    $("#img" + (i + 1)).attr("src", "https://res.cloudinary.com/dkmufkwfv/image/upload/v1622039319/star-empty_zohcfu.png")
+
+            }
+        })
+    })
+
 </script>

@@ -8,11 +8,11 @@ namespace crowdfunding_application.Models
 {
     public class PaymentTransaction : ModelBase
     {
-        public string UserId { get; set; }
         [ForeignKey("UserId")]
-        public int CampaignId { get; set; }
-        [ForeignKey("CampaignId")]
+        public string UserId { get; set; }
 
+        [ForeignKey("CampaignId")]
+        public int CampaignId { get; set; }
         public int Amount { get; set; }
         public DateTime Date { get; set; }
     }

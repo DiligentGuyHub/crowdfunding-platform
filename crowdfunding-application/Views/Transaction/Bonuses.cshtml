@@ -1,0 +1,19 @@
+﻿@model crowdfunding_application.Models.ViewModels.BonusesViewModel
+
+@{
+
+}
+
+<div class="container">
+    <div class="list-group">
+        @for(int i = 0; i < Model.BonusTransactions.Count(); i++)
+        {
+        <div class="list-group-item">
+            @*<p>Campaign: @Model.Campaigns[i].Title</p>*@
+            <p>Bonus: @Model.Bonuses[i].Title</p>
+            <p>Description: @Model.Bonuses[i].Description</p>
+            <img src="@Model.Bonuses[i].Image" />      
+        </div>
+        }
+    </div>
+</div>

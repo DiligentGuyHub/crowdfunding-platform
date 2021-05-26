@@ -5,14 +5,24 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
+    <div class="d-flex justify-content-center border-dark">
+        <ul class="list-group list-group-horizontal">
+            <li class="list-group-item text-dark font-weight-bold"><a class="btn" asp-action="" asp-controller="" asp-route-category="">Everything</a></li>
+            <li class="list-group-item text-dark font-weight-bold"><a class="btn" asp-action="" asp-controller="" asp-route-category="">Technology</a></li>
+            <li class="list-group-item text-dark font-weight-bold"><a class="btn" asp-action="" asp-controller="" asp-route-category="">Design</a></li>
+            <li class="list-group-item text-dark font-weight-bold"><a class="btn" asp-action="" asp-controller="" asp-route-category="">Art</a></li>
+            <li class="list-group-item text-dark font-weight-bold"><a class="btn" asp-action="" asp-controller="" asp-route-category="">Food</a></li>
+        </ul>
+    </div>
+    <br />
     <div>
-        @foreach(News news in Model.NewsList)
+        @foreach (News news in Model.NewsList)
         {
             <div class="card">
                 <div class="card-body">
                     <h2 class="card-title font-weight-bold">@news.Title</h2>
                     <a class="link" asp-action="Details" asp-controller="Campaign" asp-route-id="@news.CampaignId">
-                        <img width="500" src="@news.Image" />
+                        <img style="max-width: 500px; height:auto" src="@news.Image" />
                     </a>
                     <p class="card-text h3">@news.Description</p>
                     <p class="card-footer">@news.CreationDate</p>

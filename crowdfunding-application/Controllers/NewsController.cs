@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using crowdfunding_application.Models;
+using crowdfunding_application.Models.CloudinaryService;
 using crowdfunding_application.Models.Services;
 using crowdfunding_application.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -15,10 +16,12 @@ namespace crowdfunding_application.Controllers
     public class NewsController : Controller
     {
         private readonly INewsService _newsService;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public NewsController(INewsService newsService)
+        public NewsController(INewsService newsService, ICloudinaryService cloudinaryService)
         {
             _newsService = newsService;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<IActionResult> Index(int? id)
@@ -43,7 +46,7 @@ namespace crowdfunding_application.Controllers
                 Title = news.Title,
                 Description = news.Description,
                 Image = news.Image,
-                CreationDate = DateTime.Now
+                CreationDate = DateTime.Now.ToLocalTime().ToLocalTime()
             };
             await _newsService.Create(newsUpdated);
             return RedirectToAction("Inbox", "Campaign");
@@ -59,20 +62,10 @@ namespace crowdfunding_application.Controllers
         [Authorize]
         public async Task<IActionResult> Create(CreateNewsViewModel newsViewModel)
         {
-            newsViewModel.News.CreationDate = DateTime.Now.ToLocalTime();
+            newsViewModel.News.CreationDate = DateTime.Now.ToLocalTime().ToLocalTime();
             newsViewModel.News.CampaignId = newsViewModel.CampaignId;
 
-            Account account = new Account(
-                "dkmufkwfv",
-                "215513762388953",
-                "24h2YowdCkwIQMjMHnzijXp0aiE"
-                );
-            Cloudinary cloudinary = new Cloudinary(account);
-            var uploadParams = new ImageUploadParams()
-            {
-                File = new FileDescription(@"C:\Users\longr\OneDrive\Изображения\" + newsViewModel.MainImage.FileName)
-            };
-            var uploadResult = cloudinary.Upload(uploadParams);
+            var uploadResult = _cloudinaryService.UploadImage(newsViewModel.MainImage);
 
             newsViewModel.News.Image = uploadResult.SecureUrl.AbsoluteUri;
             await _newsService.Create(newsViewModel.News);

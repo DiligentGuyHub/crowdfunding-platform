@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace crowdfunding_application.Models
 {
-    public class Tag : ModelBase
+    public class BonusTransaction : ModelBase
     {
-        [ForeignKey("CampaignId")]
-        public int CampaingId { get; set; }
-        public string Title { get; set; }
+        [ForeignKey("UserId")]
+        public string UserId { get; set; }
+
+        [ForeignKey("BonusId")]
+        public int BonusId { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace crowdfunding_application.Models.ViewModels
     public class CreateCampaignViewModel
     {
         public Campaign Campaign { get; set; }
-        public IFormFile MainImage { get; 
+        public IFormFile MainImage { get;
             set; }
         public string ImagePath { get; set; }
         
