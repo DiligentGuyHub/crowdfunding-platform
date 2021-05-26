@@ -68,7 +68,7 @@ namespace crowdfunding_application.Controllers
             campaignViewModel.Campaign.CreationDate = DateTime.Now.ToLocalTime();
             campaignViewModel.Campaign.IsFinished = false;
 
-            var uploadResult = _cloudinaryService.UploadImage(@"C:\Users\longr\OneDrive\Изображения\" + campaignViewModel.MainImage.FileName);
+            var uploadResult = _cloudinaryService.UploadImage(@"C:/" + campaignViewModel.MainImage.FileName.Replace("\\", "/"));
 
             campaignViewModel.Campaign.HomeImage = uploadResult.SecureUrl.AbsoluteUri;
 
