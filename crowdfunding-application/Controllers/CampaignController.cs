@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 
 namespace crowdfunding_application.Controllers
 {
-    [Authorize(Roles = "Administrator, User")]
     public class CampaignController : Controller
     {
         private readonly ICampaignService _campaignService;
@@ -49,6 +48,7 @@ namespace crowdfunding_application.Controllers
         //    };
         //    return View(viewmodel);
         //}
+
         public async Task<IActionResult> Inbox()
         {
             var _inboxCampaignViewModel = new InboxCampaignViewModel();
@@ -87,12 +87,13 @@ namespace crowdfunding_application.Controllers
             return View(viewCampaignViewModel);
         }
 
-
+        [Authorize(Roles = "Administrator, User")]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Roles = "Administrator, User")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateCampaignViewModel campaignViewModel)
         {
@@ -117,7 +118,7 @@ namespace crowdfunding_application.Controllers
             await _newsService.Create(news);
             return RedirectToAction("Index", "Home");
         }
-
+        [Authorize(Roles = "Administrator, User")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id != null)
@@ -136,6 +137,7 @@ namespace crowdfunding_application.Controllers
             return NotFound();
         }
         [HttpPost]
+        [Authorize(Roles = "Administrator, User")]
         public async Task<IActionResult> Edit(EditCampaignViewModel editCampaignViewModel)
         {
             if (editCampaignViewModel.MainImage != null)
@@ -161,6 +163,7 @@ namespace crowdfunding_application.Controllers
 
         [HttpGet]
         [ActionName("Delete")]
+        [Authorize(Roles = "Administrator, User")]
         public async Task<IActionResult> ConfirmDelete(int? id)
         {
             if (id != null)
@@ -173,6 +176,7 @@ namespace crowdfunding_application.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator, User")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id != null)
@@ -195,6 +199,7 @@ namespace crowdfunding_application.Controllers
 
         [HttpGet]
         [ActionName("Finish")]
+        [Authorize(Roles = "Administrator, User")]
         public async Task<IActionResult> FinishCampaign(int? id)
         {
             if (id != null)
@@ -207,6 +212,7 @@ namespace crowdfunding_application.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator, User")]
         public async Task<IActionResult> Finish(int? id)
         {
             if (id != null)
@@ -246,10 +252,16 @@ namespace crowdfunding_application.Controllers
                 CommentHistory = new List<Comment>(await _commentService.GetJoin(item => item.CampaignId == campaign.Id))
             };
 
-            var role = await _userManager.GetRolesAsync(await _userManager.GetUserAsync(User));
+            if(User != null)
+            {
+                if(await _userManager.GetUserAsync(User) != null)
+                {
+                    var role = await _userManager.GetRolesAsync(await _userManager.GetUserAsync(User));
+                    ViewBag.Role = role.FirstOrDefault();
+                }
+            }
             ViewBag.CurrentUserId = _userManager.GetUserId(User);
             ViewBag.CreatorId = campaign.UserId;
-            ViewBag.Role = role.FirstOrDefault();
 
             var allRatings = await _ratingService.GetJoin(item => item.CampaignId == id);
             if (allRatings.Count() != 0)

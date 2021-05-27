@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace crowdfunding_application.Controllers
 {
-    [Authorize(Roles ="Administrator, User")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -25,7 +24,8 @@ namespace crowdfunding_application.Controllers
             _newsService = newsService;
             _inboxNewsViewModel = new InboxNewsViewModel();
         }
-
+        [Authorize(Roles = "Administrator, User")]
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var news = new List<News>();
