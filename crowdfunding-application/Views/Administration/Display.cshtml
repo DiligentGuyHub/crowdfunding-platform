@@ -1,0 +1,69 @@
+﻿@model crowdfunding_application.Models.ViewModels.DisplayAdministrationViewModel
+
+@{ 
+
+}
+
+<div class="row table-responsive">
+    <table class="table table-hover">
+        <thead class="bg-dark text-light">
+            <tr>
+                <th>Id</th>
+                <th>Username</th>
+                <th>Mail</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            @for (int i = 0; i < Model.Users.Count(); i++)
+            {
+                <tr>
+                    <td>@Model.Users[i].Id</td>
+                    <td>@Model.Users[i].UserName</td>
+                    <td>@Model.Users[i].Email</td>
+                    <td>User</td>
+                    <td>
+                        <a asp-action="ChangeRole" asp-controller="Administration" asp-route-id="@Model.Users[i]" asp-route-rl="Blocked">Block</a> |
+                        <a asp-action="ChangeRole" asp-controller="Administration" asp-route-id="@Model.Users[i]" asp-route-rl="Administrator">Admin</a> |
+                        <a asp-action="ChangeRole" asp-controller="Administration" asp-route-id="@Model.Users[i]" asp-route-rl="User">User</a> |
+                        <a asp-action="Delete" asp-controller="Administration" asp-route-id="@Model.Users[i]">Delete</a>
+                        <a asp-action="View" asp-controller="Administration" asp-route-id="@Model.Users[i]">Details</a> |
+                    </td>
+                </tr>
+            }
+            @for (int i = 0; i < Model.Administrators.Count(); i++)
+            {
+                <tr>
+                    <td>@Model.Administrators[i].Id</td>
+                    <td>@Model.Administrators[i].UserName</td>
+                    <td>@Model.Administrators[i].Email</td>
+                    <td>Administrator</td>
+                    <td>
+                        <a asp-action="ChangeRole" asp-controller="Administration" asp-route-id="@Model.Administrators[i]" asp-route-rl="Blocked">Block</a> |
+                        <a asp-action="ChangeRole" asp-controller="Administration" asp-route-id="@Model.Administrators[i]" asp-route-rl="Administrator">Admin</a> |
+                        <a asp-action="ChangeRole" asp-controller="Administration" asp-route-id="@Model.Administrators[i]" asp-route-rl="User">User</a> |
+                        <a asp-action="Delete" asp-controller="Administration" asp-route-id="@Model.Administrators[i]">Delete</a>
+                        <a asp-action="View" asp-controller="Administration" asp-route-id="@Model.Administrators[i]">Details</a> |
+                    </td>
+                </tr>
+            }
+            @for (int i = 0; i < Model.Blocked.Count(); i++)
+            {
+                <tr>
+                    <td>@Model.Blocked[i].Id</td>
+                    <td>@Model.Blocked[i].UserName</td>
+                    <td>@Model.Blocked[i].Email</td>
+                    <td>Blocked</td>
+                    <td>
+                        <a asp-action="ChangeRole" asp-controller="Administration" asp-route-id="@Model.Blocked[i]" asp-route-rl="Blocked">Block</a> |
+                        <a asp-action="ChangeRole" asp-controller="Administration" asp-route-id="@Model.Blocked[i]" asp-route-rl="Administrator">Admin</a> |
+                        <a asp-action="ChangeRole" asp-controller="Administration" asp-route-id="@Model.Blocked[i]" asp-route-rl="User">User</a> |   
+                        <a asp-action="Delete" asp-controller="Administration" asp-route-id="@Model.Blocked[i]">Delete</a>
+                        <a asp-action="View" asp-controller="Administration" asp-route-id="@Model.Blocked[i]">Details</a> |
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

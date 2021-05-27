@@ -25,7 +25,7 @@
             </div>
             <hr />
             <p class="card-footer text-muted">Creation date @Model.campaign.CreationDate</p>
-            @if (ViewBag.CurrentUserId != ViewBag.CreatorId)
+            @if (ViewBag.CurrentUserId != ViewBag.CreatorId && ViewBag.Role != "Administrator")
             {
                 <div id="donatorControl">
                     @if (Model.campaign.IsFinished)

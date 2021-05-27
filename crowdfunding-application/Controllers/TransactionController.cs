@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace crowdfunding_application.Controllers
 {
+    [Authorize(Roles = "Administrator, User")]
     public class TransactionController : Controller
     {
         private readonly ITransactionService _transactionService;

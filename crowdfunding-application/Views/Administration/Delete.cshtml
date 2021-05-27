@@ -1,0 +1,25 @@
+﻿@model Microsoft.AspNetCore.Identity.IdentityUser
+@{
+    ViewBag.Title = "Delete user";
+}
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>ID</dt>
+        <dd>
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt>Username</dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+    </dl>
+
+    <div>
+        <form asp-controller="Administration" asp-action="Delete" method="post">
+            <div class="form-group">
+                <input type="submit" class="btn btn-outline-danger" value="Delete" />
+            </div>
+        </form>
+    </div>
+</div>

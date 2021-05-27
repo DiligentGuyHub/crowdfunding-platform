@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace crowdfunding_application.Controllers
 {
+    [Authorize(Roles = "Administrator")]
+
     [AllowAnonymous, Route("Account")]
     public class AccountController : Controller
     {

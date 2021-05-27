@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace crowdfunding_application.Controllers
 {
+    [Authorize(Roles = "Administrator, User")]
     public class CampaignController : Controller
     {
         private readonly ICampaignService _campaignService;
@@ -193,9 +194,9 @@ namespace crowdfunding_application.Controllers
                         CampaignId = campaign.Id,
                         Title = $"{campaign.Title} - campaign finished!",
                         Description = $"Campaign goal reached in " +
-                        $"{(int)(DateTime.Now.ToLocalTime() - campaign.CreationDate).TotalDays} days, " +
-                        $"{(int)(DateTime.Now.ToLocalTime() - campaign.CreationDate).TotalHours} hours, " +
-                        $"{(int)(DateTime.Now.ToLocalTime() - campaign.CreationDate).TotalHours} minutes",
+                        $"{(int)(DateTime.Now.ToLocalTime() - campaign.CreationDate.ToLocalTime()).TotalDays} days, " +
+                        $"{(int)(DateTime.Now.ToLocalTime() - campaign.CreationDate.ToLocalTime()).TotalHours} hours, " +
+                        $"{(int)(DateTime.Now.ToLocalTime() - campaign.CreationDate.ToLocalTime()).TotalHours} minutes",
                         CreationDate = DateTime.Now.ToLocalTime(),
                         Image = campaign.HomeImage
                     };
@@ -218,8 +219,10 @@ namespace crowdfunding_application.Controllers
                 CommentHistory = new List<Comment>(await _commentService.GetJoin(item => item.CampaignId == campaign.Id))
             };
 
+            var role = await _userManager.GetRolesAsync(await _userManager.GetUserAsync(User));
             ViewBag.CurrentUserId = _userManager.GetUserId(User);
             ViewBag.CreatorId = campaign.UserId;
+            ViewBag.Role = role.FirstOrDefault();
 
             var allRatings = await _ratingService.GetJoin(item => item.CampaignId == id);
             if (allRatings.Count() != 0)
