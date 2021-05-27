@@ -40,7 +40,6 @@ namespace crowdfunding_application.Controllers
             _commentService = commentService;
         }
 
-        [Authorize]
         //public IActionResult Create()
         //{
         //    var campaign = new Campaign() { Title = "New campaign" };
@@ -50,7 +49,6 @@ namespace crowdfunding_application.Controllers
         //    };
         //    return View(viewmodel);
         //}
-        [Authorize]
         public async Task<IActionResult> Inbox()
         {
             var _inboxCampaignViewModel = new InboxCampaignViewModel();
@@ -58,14 +56,44 @@ namespace crowdfunding_application.Controllers
             return View(_inboxCampaignViewModel);
         
         }
-        [Authorize]
+
+        public async Task<IActionResult> View(string category)
+        {
+            var viewCampaignViewModel = new ViewCampaignViewModel() { Category = category };
+            if(category == "All")
+            {
+                viewCampaignViewModel.Campaigns.AddRange(await _campaignService.GetAll());
+            }
+            else
+            {
+                viewCampaignViewModel.Campaigns.AddRange(await _campaignService.GetJoin(item => item.UserId == _userManager.GetUserId(User) && item.Category == category));
+            }
+            return View(viewCampaignViewModel);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Search(string key)
+        {
+            var viewCampaignViewModel = new ViewCampaignViewModel() { Category = "All" };
+            var campaigns = await _campaignService.GetAll();
+            var bonuses = await _bonusService.GetAll();
+            var news = await _newsService.GetAll();
+            viewCampaignViewModel.Campaigns = campaigns.Where(item => 
+                item.Title.ToLower().Contains(key.ToLower()) ||
+                item.Description.ToLower().Contains(key.ToLower()) ||
+                item.Category.ToLower().Contains(key.ToLower())
+            ).ToList();
+            return View(viewCampaignViewModel);
+        }
+
+
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Create(CreateCampaignViewModel campaignViewModel)
         {
             campaignViewModel.Campaign.UserId = _userManager.GetUserId(User);
@@ -108,7 +136,6 @@ namespace crowdfunding_application.Controllers
             return NotFound();
         }
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Edit(EditCampaignViewModel editCampaignViewModel)
         {
             if (editCampaignViewModel.MainImage != null)
