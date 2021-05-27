@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using crowdfunding_application.Models.Hubs;
 
 namespace crowdfunding_application
 {
@@ -52,6 +53,7 @@ namespace crowdfunding_application
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
+            services.AddSignalR();
             services.AddRazorPages();
 
             services.AddAuthentication()
@@ -74,6 +76,8 @@ namespace crowdfunding_application
             services.AddScoped<IBonusTransactionService, BonusTransactionService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IRatingService, RatingService>();
+            services.AddScoped<ICommentService, CommentService>();
+            services.AddTransient<CommentHub>();
 
             services.AddScoped<ICloudinaryService, CloudinaryService>();
 
@@ -154,6 +158,7 @@ namespace crowdfunding_application
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+                endpoints.MapHub<CommentHub>("/commentHub");
             });
         }
     }

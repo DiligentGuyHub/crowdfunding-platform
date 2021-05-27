@@ -21,12 +21,13 @@ namespace crowdfunding_application.Controllers
         private readonly IBonusService _bonusService;
         private readonly INewsService _newsService;
         private readonly IRatingService _ratingService;
+        private readonly ICommentService _commentService;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly UserManager<IdentityUser> _userManager;
         private DetailsCampaignViewModel _detailsCampaignViewModel;
 
 
-        public CampaignController(ICampaignService campaignService, UserManager<IdentityUser> userManager, INewsService newsService, IBonusService bonusService, ICloudinaryService cloudinaryService, IRatingService ratingService)
+        public CampaignController(ICampaignService campaignService, UserManager<IdentityUser> userManager, INewsService newsService, IBonusService bonusService, ICloudinaryService cloudinaryService, IRatingService ratingService, ICommentService commentService)
         {
             _campaignService = campaignService;
             _userManager = userManager;
@@ -35,6 +36,7 @@ namespace crowdfunding_application.Controllers
             _cloudinaryService = cloudinaryService;
             _detailsCampaignViewModel = new DetailsCampaignViewModel();
             _ratingService = ratingService;
+            _commentService = commentService;
         }
 
         [Authorize]
@@ -212,7 +214,8 @@ namespace crowdfunding_application.Controllers
             {
                 campaign = campaign,
                 NewsList = new List<News>(await _newsService.GetJoin(item => item.CampaignId == campaign.Id)),
-                BonusList = new List<Bonus>(await _bonusService.GetJoin(item=> item.CampaignId == campaign.Id))
+                BonusList = new List<Bonus>(await _bonusService.GetJoin(item => item.CampaignId == campaign.Id)),
+                CommentHistory = new List<Comment>(await _commentService.GetJoin(item => item.CampaignId == campaign.Id))
             };
 
             ViewBag.CurrentUserId = _userManager.GetUserId(User);

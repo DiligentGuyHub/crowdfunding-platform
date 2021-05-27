@@ -1,0 +1,23 @@
+{
+  "name": "crowdfunding-application",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DiligentGuyHub/crowdfunding-platform.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DiligentGuyHub/crowdfunding-platform/issues"
+  },
+  "homepage": "https://github.com/DiligentGuyHub/crowdfunding-platform#readme",
+  "dependencies": {
+    "@microsoft/signalr": "^5.0.6"
+  }
+}

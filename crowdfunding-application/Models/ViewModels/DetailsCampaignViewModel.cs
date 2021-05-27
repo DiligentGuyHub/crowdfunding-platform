@@ -11,6 +11,7 @@ namespace crowdfunding_application.Models.ViewModels
         {
             NewsList = new List<News>();
             BonusList = new List<Bonus>();
+            CommentHistory = new List<Comment>();
         }
         public int Percentage { get; set; }
         private Campaign _campaign;
@@ -40,6 +41,7 @@ namespace crowdfunding_application.Models.ViewModels
         }
         public List<News> NewsList { get; set; }
         public List<Bonus> BonusList { get; set; }
+        public List<Comment> CommentHistory { get; set; }
 
     }
 }

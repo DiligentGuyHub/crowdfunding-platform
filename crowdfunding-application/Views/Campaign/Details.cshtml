@@ -1,7 +1,9 @@
 ﻿@model crowdfunding_application.Models.ViewModels.DetailsCampaignViewModel
 @{
     ViewBag.Title = Model.campaign.Title;
+    ViewBag.CampaignId = Model.campaign.Id;
 }
+
 <div>
     <div class="card">
         <div class="card-body">
@@ -21,7 +23,6 @@
                 <a asp-action="Rate" asp-controller="Campaign" asp-route-id="@Model.campaign.Id" asp-route-rating="4" class="rating bg-transparent border-0"><img id="img4" class="rating" width="32" src="https://res.cloudinary.com/dkmufkwfv/image/upload/v1622039319/star-empty_zohcfu.png" /></a>
                 <a asp-action="Rate" asp-controller="Campaign" asp-route-id="@Model.campaign.Id" asp-route-rating="5" class="rating bg-transparent border-0"><img id="img5" class="rating" width="32" src="https://res.cloudinary.com/dkmufkwfv/image/upload/v1622039319/star-empty_zohcfu.png" /></a>
             </div>
-            
             <hr />
             <p class="card-footer text-muted">Creation date @Model.campaign.CreationDate</p>
             @if (ViewBag.CurrentUserId != ViewBag.CreatorId)
@@ -29,97 +30,153 @@
                 <div id="donatorControl">
                     @if (Model.campaign.IsFinished)
                     {
-                    <a class="btn btn-outline-success col-sm-12 disabled" asp-action="Pay" asp-controller="Transaction" asp-route-id="@Model.campaign.Id">Donate unavailable</a>
+                        <a class="btn btn-outline-success col-sm-12 disabled" asp-action="Pay" asp-controller="Transaction" asp-route-id="@Model.campaign.Id">Donate unavailable</a>
                     }
                     else
                     {
                         <a class="btn btn-outline-success col-sm-12" asp-action="Pay" asp-controller="Transaction" asp-route-id="@Model.campaign.Id">Donate</a>
 
                     }
-                <ul class="list-group list-group-horizontal">
-                    @foreach (var item in Model.BonusList)
-                    {
-                        <li class="list-group-item text-lg-left">
-                            <div class="card-body">
-                                <h3 class="card-title">@item.Title</h3>
-                                <img src="@item.Image" />
-                                <p class="card-text">@item.Description</p>
-                            </div>
-                        </li>
-                    }
-                </ul>
+                    <ul class="list-group list-group-horizontal">
+                        @foreach (var item in Model.BonusList)
+                        {
+                            <li class="list-group-item text-lg-left">
+                                <div class="card-body">
+                                    <h3 class="card-title">@item.Title</h3>
+                                    <img src="@item.Image" />
+                                    <p class="card-text">@item.Description</p>
+                                </div>
+                            </li>
+                        }
+                    </ul>
                 </div>
             }
             else
             {
-        <div id="creatorControl">
-            <h2>News</h2>
-            <hr />
-            <a class="btn btn-outline-danger col-sm-2" asp-action="Delete" asp-controller="Campaign" asp-route-id="@Model.campaign.Id">Delete</a>
-            @if (!Model.campaign.IsFinished)
-            {
-            <a class="btn btn-outline-danger col-sm-2" asp-action="Finish" asp-controller="Campaign" asp-route-id="@Model.campaign.Id">Finish</a>
-            <a class="btn btn-outline-primary col-sm-2" asp-action="Create" asp-controller="News" asp-route-id="@Model.campaign.Id">Create news</a>
-            <a class="btn btn-outline-primary col-sm-2" asp-action="Edit" asp-controller="Campaign" asp-route-id="@Model.campaign.Id">Edit</a>
+                <div id="creatorControl">
+                    <h2>News</h2>
+                    <hr />
+                    <a class="btn btn-outline-danger col-sm-2" asp-action="Delete" asp-controller="Campaign" asp-route-id="@Model.campaign.Id">Delete</a>
+                    @if (!Model.campaign.IsFinished)
+                    {
+                        <a class="btn btn-outline-danger col-sm-2" asp-action="Finish" asp-controller="Campaign" asp-route-id="@Model.campaign.Id">Finish</a>
+                        <a class="btn btn-outline-primary col-sm-2" asp-action="Create" asp-controller="News" asp-route-id="@Model.campaign.Id">Create news</a>
+                        <a class="btn btn-outline-primary col-sm-2" asp-action="Edit" asp-controller="Campaign" asp-route-id="@Model.campaign.Id">Edit</a>
+                    }
+
+                    <h2>Bonuses</h2>
+                    <hr />
+                    <ul class="list-group">
+                        @foreach (var item in Model.NewsList)
+                        {
+                            <li class="list-group-item text-lg-left">
+                                <div class="card-body">
+                                    <h5 class="card-title">@item.Title</h5>
+                                    <p class="card-text">@item.Description</p>
+                                    <p class="card-footer text-muted">@item.CreationDate</p>
+                                    @if (!Model.campaign.IsFinished)
+                                    {
+                                        <a class="btn btn-outline-primary" asp-action="Index" asp-controller="News" asp-route-id="@item.Id">Edit</a>
+                                        <a class="btn btn-outline-danger" asp-action="Delete" asp-controller="News" asp-route-id="@item.Id">Delete</a>
+
+                                    }
+                                </div>
+                            </li>
+
+                        }
+                    </ul>
+                    <br />
+                    <h2>Bonuses</h2>
+                    <hr />
+                    @if (!Model.campaign.IsFinished)
+                    {
+                        <a class="btn btn-outline-primary col-sm-9" asp-action="Create" asp-controller="Bonus" asp-route-id="@Model.campaign.Id">Create</a>
+
+                    }
+                    <ul class="list-group list-group-horizontal">
+                        @foreach (var item in Model.BonusList)
+                        {
+                            <li class="list-group-item text-lg-left">
+                                <div class="card-body">
+                                    <h3 class="card-title">@item.Title</h3>
+                                    <img src="@item.Image" />
+                                    <p class="card-text">@item.Description</p>
+                                    @if (!Model.campaign.IsFinished)
+                                    {
+                                        <a class="btn btn-outline-primary" asp-action="Index" asp-controller="Bonus" asp-route-id="@item.Id">Edit</a>
+                                        <a class="btn btn-outline-danger" asp-action="Delete" asp-controller="Bonus" asp-route-id="@item.Id">Delete</a>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
             }
 
-            <h2>Bonuses</h2>
-            <hr />
-            <ul class="list-group">
-                @foreach (var item in Model.NewsList)
-                {
-                <li class="list-group-item text-lg-left">
-                    <div class="card-body">
-                        <h5 class="card-title">@item.Title</h5>
-                        <p class="card-text">@item.Description</p>
-                        <p class="card-footer text-muted">@item.CreationDate</p>
-                        @if (!Model.campaign.IsFinished)
-                            {
-                        <a class="btn btn-outline-primary" asp-action="Index" asp-controller="News" asp-route-id="@item.Id">Edit</a>
-                        <a class="btn btn-outline-danger" asp-action="Delete" asp-controller="News" asp-route-id="@item.Id">Delete</a>
-
-                            }
-                    </div>
-                </li>
-
-                }
-            </ul>
-            <br />
-            <h2>Bonuses</h2>
-            <hr />
-            @if (!Model.campaign.IsFinished)
-            {
-            <a class="btn btn-outline-primary col-sm-9" asp-action="Create" asp-controller="Bonus" asp-route-id="@Model.campaign.Id">Create</a>
-
-            }
-            <ul class="list-group list-group-horizontal">
-                @foreach (var item in Model.BonusList)
-                {
-                <li class="list-group-item text-lg-left">
-                    <div class="card-body">
-                        <h3 class="card-title">@item.Title</h3>
-                        <img src="@item.Image" />
-                        <p class="card-text">@item.Description</p>
-                        @if (!Model.campaign.IsFinished)
-                            {
-                        <a class="btn btn-outline-primary" asp-action="Index" asp-controller="Bonus" asp-route-id="@item.Id">Edit</a>
-                        <a class="btn btn-outline-danger" asp-action="Delete" asp-controller="Bonus" asp-route-id="@item.Id">Delete</a>
-                            }
-                    </div>
-                </li>
-                }
-            </ul>
         </div>
 
-            }
 
+        <div class="col-12">
+            <label>Comment</label><br />
+            <div class="row">
+                <div><input type="text" id="messageInput" class="input-group-text" /></div>
+               
+                    <input type="button" id="sendButton" value="Publish" class="btn btn-primary" />
+            </div>
         </div>
+        <div class="row">
+            <div class="col-12">
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div id="commentList" class="list-group">
+                    @foreach(var item in Model.CommentHistory)
+                    {
+                        <p class="list-group-item"><b>@item.UserName</b><br />@item.Content</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+        <script>
+            "use strict";
 
+            var connection = new signalR.HubConnectionBuilder().withUrl("/commentHub").build();
+
+            //Disable send button until connection is established
+            document.getElementById("sendButton").disabled = true;
+
+            connection.on("RecieveComment", function (user, message) {
+                document.getElementById("commentList").innerHTML += '<p class="list-group-item"><b>' + user + "</b><br/>" + message + "</p>"
+                //var p = document.createElement("p");
+                //p.className = "list-group-item";
+                //document.getElementById("commentList").appendChild(p);
+                //p.textContent = `${user}: ${message}`;
+            });
+
+            connection.start().then(function () {
+                document.getElementById("sendButton").disabled = false;
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            document.getElementById("sendButton").addEventListener("click", function (event) {
+                var message = document.getElementById("messageInput").value;
+                connection.invoke("SendComment", @ViewBag.CampaignId, message).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                event.preventDefault();
+            });
+        </script>
 
     </div>
 </div>
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
 <script>
     $(document).ready(function () {
         for (let i = 0; i < Number(@ViewBag.MyRating); i++) {

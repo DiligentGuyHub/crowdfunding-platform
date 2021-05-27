@@ -21,5 +21,6 @@ namespace crowdfunding_application.Data
         public DbSet<News> News { get; set; }
         public DbSet<PaymentTransaction> Transactions { get; set; }
         public DbSet<Rating> Ratings { get; set; }
+        public DbSet<Comment> Comments { get; set; }
     }
 }
